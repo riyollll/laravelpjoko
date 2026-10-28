@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.env
+.env.example
+/vendor
+/storage/*.key
+/public/build
+/public/hot
+/public/storage
+/.idea
+/.vscode
+/.fleet
+/.phpunit.cache
+phpunit.xml
+README.md
