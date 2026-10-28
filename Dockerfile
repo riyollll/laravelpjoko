@@ -15,12 +15,16 @@ RUN apt-get update && apt-get install -y \
     npm \
     && docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd \
     && a2enmod rewrite \
-    && sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf \
-    && echo '<Directory "/var/www/html/public">' > /etc/apache2/conf-available/laravel.conf \
-    && echo '    AllowOverride All' >> /etc/apache2/conf-available/laravel.conf \
-    && echo '    Require all granted' >> /etc/apache2/conf-available/laravel.conf \
-    && echo '</Directory>' >> /etc/apache2/conf-available/laravel.conf \
-    && a2enconf laravel \
+    && echo 'ServerName localhost' >> /etc/apache2/conf-available/servername.conf \
+    && a2enconf servername \
+    && echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf \
+    && echo '    DocumentRoot /var/www/html/public' >> /etc/apache2/sites-available/000-default.conf \
+    && echo '    <Directory "/var/www/html/public">' >> /etc/apache2/sites-available/000-default.conf \
+    && echo '        Options Indexes FollowSymLinks' >> /etc/apache2/sites-available/000-default.conf \
+    && echo '        AllowOverride All' >> /etc/apache2/sites-available/000-default.conf \
+    && echo '        Require all granted' >> /etc/apache2/sites-available/000-default.conf \
+    && echo '    </Directory>' >> /etc/apache2/sites-available/000-default.conf \
+    && echo '</VirtualHost>' >> /etc/apache2/sites-available/000-default.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY . /var/www/html
