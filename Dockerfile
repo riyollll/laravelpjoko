@@ -15,6 +15,12 @@ RUN apt-get update && apt-get install -y \
     npm \
     && docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd \
     && a2enmod rewrite \
+    && sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf \
+    && echo '<Directory "/var/www/html/public">' > /etc/apache2/conf-available/laravel.conf \
+    && echo '    AllowOverride All' >> /etc/apache2/conf-available/laravel.conf \
+    && echo '    Require all granted' >> /etc/apache2/conf-available/laravel.conf \
+    && echo '</Directory>' >> /etc/apache2/conf-available/laravel.conf \
+    && a2enconf laravel \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY . /var/www/html
@@ -25,6 +31,7 @@ RUN composer install --no-interaction --prefer-dist --no-progress --no-dev --opt
     && npm install --no-fund --no-audit \
     && npm run build \
     && php artisan config:clear \
+    && php artisan optimize:clear \
     && php artisan storage:link \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public
 
