@@ -31,13 +31,14 @@ COPY . /var/www/html
 
 RUN composer install --no-interaction --prefer-dist --no-progress --no-dev --optimize-autoloader \
     && cp .env.example .env \
+    && touch database/database.sqlite \
     && php artisan key:generate --force \
     && npm install --no-fund --no-audit \
     && npm run build \
     && php artisan config:clear \
     && php artisan optimize:clear \
     && php artisan storage:link \
-    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public /var/www/html/database
 
 EXPOSE 80
 
