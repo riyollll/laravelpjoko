@@ -20,6 +20,8 @@ RUN apt-get update && apt-get install -y \
 COPY . /var/www/html
 
 RUN composer install --no-interaction --prefer-dist --no-progress --no-dev --optimize-autoloader \
+    && cp .env.example .env \
+    && php artisan key:generate --force \
     && npm install --no-fund --no-audit \
     && npm run build \
     && php artisan config:clear \
